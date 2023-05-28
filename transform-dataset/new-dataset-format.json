@@ -1,0 +1,28 @@
+{
+    "images": [
+        {
+            "id": 5,
+            "dataset_id": 2,
+            "path": "path",
+            "width": 2972,
+            "height": 3983,
+            "file_name": "path",
+            "annotated": true,
+            "annotations": [
+                {
+                    "id": 10,
+                    "image_id": 5,
+                    "segmentation": [
+                        []
+                    ],
+                    "area": 214636,
+                    "bbox": [],
+                    "iscrowd": false,
+                    "isbbox": false,
+                    "color": "#b19e17"
+                }
+            ],
+            "num_annotations": 0
+        }
+    ]
+}

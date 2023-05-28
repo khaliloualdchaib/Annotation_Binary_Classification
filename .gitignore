@@ -1,0 +1,8 @@
+datasets/
+Patches/
+__pycache__
+Testing/
+models/
+Training/
+Validation/
+PatchData/

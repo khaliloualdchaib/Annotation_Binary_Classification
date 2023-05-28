@@ -20,19 +20,22 @@ def dataPrep():
     p = Patch(dataset, patch_height, patch_width, root)
     p.CreatePatches()
     Datasplitting(0.60,0.20,0.20,dataset, patch_height=patch_height, patch_width=patch_width)
+#dataPrep()
 print("Data prep finished")
-sys.exit()
 #-------------------------------------------------- Model Training -------------------------------------------------------------------------
 ##################### DATA LOADING #####################################
 trainingdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Training")
 testdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Testing")
 validationdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Validation")
+print("training data size:", len(trainingdata))
+print("testing data size:", len(testdata))
+print("validation data size:", len(validationdata))
 batch_size = 16
 training_loader = DataLoader(trainingdata, batch_size=batch_size)
 testing_loader = DataLoader(testdata, batch_size=batch_size)
 validation_loader = DataLoader(validationdata, batch_size=batch_size)
 
-
+sys.exit()
 
 ##################### PARAMETERS #####################################
 # Check if the GPU is available

@@ -44,7 +44,11 @@ def Datasplitting(trainingpercentage, testingpercentage, validationpercentage, d
         random.seed(42)
         random.shuffle(clean[i])
         Training_dataset[i] = clean[i][:amount_per_image]
+        Training_dataset[i].extend(annotated[i][:amount_per_image])
+
         clean[i] = clean[i][amount_per_image:]
+        annotated[i] = annotated[i][amount_per_image:]
+
         
     #### CREATE TESTING,VALIDATION DATASET
 
@@ -61,12 +65,13 @@ def Datasplitting(trainingpercentage, testingpercentage, validationpercentage, d
         Validation_dataset[i] = clean[i][:amount_per_image_validation]
         Validation_dataset[i].extend(annotated[i][:amount_per_image_validation])
         clean[i] = clean[i][amount_per_image_validation:]
-        annotated[i] = clean[i][amount_per_image_validation:]
+        annotated[i] = annotated[i][amount_per_image_validation:]
+
 
         Testing_dataset[i] = clean[i][:amount_per_image_testing]
         Testing_dataset[i].extend(annotated[i][:amount_per_image_testing])
         clean[i] = clean[i][amount_per_image_testing:]
-        annotated[i] = clean[i][amount_per_image_testing:]
+        annotated[i] = annotated[i][amount_per_image_testing:]
 
 
     training_path = os.getcwd() + "\\Training\\"
@@ -81,18 +86,18 @@ def Datasplitting(trainingpercentage, testingpercentage, validationpercentage, d
         os.makedirs(validation_path)
     for i in tqdm(Training_dataset, desc="Moving training patches"):
         for j in Training_dataset[i]:
-            source = Patches_path + i + "\\" + j + ".png"
-            destination = training_path + j + ".png"
+            source = Patches_path + i + "\\" + j + ".pt"
+            destination = training_path + j + ".pt"
             os.rename(source,destination)
     for i in tqdm(Testing_dataset, desc="Moving testing patches"):
         for j in Testing_dataset[i]:
-            source = Patches_path + i + "\\" + j + ".png"
-            destination = testing_path + j + ".png"
+            source = Patches_path + i + "\\" + j + ".pt"
+            destination = testing_path + j + ".pt"
             os.rename(source,destination)
     for i in tqdm(Validation_dataset, desc="Moving validation patches"):
         for j in Validation_dataset[i]:
-            source = Patches_path + i + "\\" + j + ".png"
-            destination = validation_path + j + ".png"
+            source = Patches_path + i + "\\" + j + ".pt"
+            destination = validation_path + j + ".pt"
             os.rename(source,destination)
     #get list of all patches for each set
     TrainingList = [patchid for list in Training_dataset.values() for patchid in list]

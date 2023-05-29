@@ -18,7 +18,6 @@ class CNN(nn.Module):
             nn.ReLU(True),
         )
         self.fcinputsize = self.calculate_fc_input()[0] * self.calculate_fc_input()[1] * self.calculate_fc_input()[2]
-        print(self.fcinputsize)
         self.fc_layers = nn.Sequential(
             nn.Linear(self.fcinputsize, 64),
             nn.ReLU(inplace=True),

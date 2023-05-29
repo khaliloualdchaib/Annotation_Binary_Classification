@@ -15,8 +15,8 @@ import sys
 #Put here the path to root folder
 root = os.getcwd()
 dataset = FAAMDataset("jsonfiles/new.json")
-patch_width = 500
-patch_height = 500
+patch_width = 100
+patch_height = 100
 def dataPrep():
     p = Patch(dataset, patch_height, patch_width, root)
     p.CreatePatches()
@@ -27,15 +27,17 @@ print("Data prep finished")
 trainingdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Training")
 testdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Testing")
 validationdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Validation")
-batch_size = 128
+batch_size = 64
+print(len(trainingdata))
+print(len(testdata))
+print(len(validationdata))
 training_loader = DataLoader(trainingdata, batch_size=batch_size)
 testing_loader = DataLoader(testdata, batch_size=batch_size)
 validation_loader = DataLoader(validationdata, batch_size=batch_size)
 ##################### PARAMETERS #####################################
 # Check if the GPU is available
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-
-model = CNN(500, 500)
+model = CNN(100, 100)
 model.to(device)
 
 loss_fn = torch.nn.BCELoss()

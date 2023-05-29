@@ -21,7 +21,6 @@ def dataPrep():
     p = Patch(dataset, patch_height, patch_width, root)
     p.CreatePatches()
     Datasplitting(0.60,0.20,0.20,dataset, patch_height=patch_height, patch_width=patch_width)
-dataPrep()
 print("Data prep finished")
 #-------------------------------------------------- Model Training -------------------------------------------------------------------------
 ##################### DATA LOADING #####################################

@@ -10,14 +10,17 @@ class CNN(nn.Module):
         self.conv_layers = nn.Sequential(
             nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
+            nn.Dropout(0.2),
             nn.MaxPool2d(kernel_size=2, stride=2),
             
             nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
+            nn.Dropout(0.2),
             nn.MaxPool2d(kernel_size=2, stride=2),
             
             nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
+            nn.Dropout(0.2),
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
         self.fcinputsize = self.calculate_fc_input()[0] * self.calculate_fc_input()[1] * self.calculate_fc_input()[2]
@@ -25,6 +28,7 @@ class CNN(nn.Module):
         self.fc_layers = nn.Sequential(
             nn.Linear(self.fcinputsize, 128),
             nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
             nn.Linear(128, 1),
             nn.Sigmoid()
         )
@@ -41,7 +45,7 @@ class CNN(nn.Module):
                 height = floor((height - module.kernel_size) / module.stride) + 1
                 width = floor((width - module.kernel_size) / module.stride) + 1
                 continue
-            elif isinstance(module,nn.ReLU) or isinstance(module, nn.Dropout2d):
+            elif isinstance(module,nn.ReLU) or isinstance(module, nn.Dropout):
                 continue
             elif isinstance(module,nn.BatchNorm2d):
                 continue

@@ -27,7 +27,7 @@ print("Data prep finished")
 trainingdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Training")
 testdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Testing")
 validationdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Validation")
-batch_size = 16
+batch_size = 128
 training_loader = DataLoader(trainingdata, batch_size=batch_size)
 testing_loader = DataLoader(testdata, batch_size=batch_size)
 validation_loader = DataLoader(validationdata, batch_size=batch_size)
@@ -39,16 +39,15 @@ model = CNN(500, 500)
 model.to(device)
 
 loss_fn = torch.nn.BCELoss()
-
 lr= 0.001
 
 ### Set the random seed for reproducible results
 torch.manual_seed(0)
 
-optim = torch.optim.Adam(model.parameters(), lr=lr)
+optim = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=0.001)
 ##################### TRAINING + Validation #####################################
 pipeline = MLPipeline(model, device, loss_fn, optim)
-log_dict = pipeline.train_epochs(1,training_loader, validation_loader,True)
+log_dict = pipeline.train_epochs(15,training_loader, validation_loader,True)
 ##################### TESTING #####################################
 #model.load_state_dict(torch.load("autoencoder_reduced_filters.pth", map_location=torch.device('cpu')))
 #model.eval()

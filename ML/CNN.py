@@ -8,28 +8,22 @@ class CNN(nn.Module):
         self.width = width
         self.height = height
         self.conv_layers = nn.Sequential(
-            nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.2),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            
-            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.2),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            
-            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.2),
-            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(3,2,3,stride=2, padding=1),
+            nn.ReLU(True),
+            nn.Dropout(p=0.2),
+            nn.Conv2d(2,4,3,stride=2, padding=1),
+            nn.ReLU(True),
+            nn.Dropout(p=0.2),
+            nn.Conv2d(4,8,3,stride=2, padding=0),
+            nn.ReLU(True),
         )
         self.fcinputsize = self.calculate_fc_input()[0] * self.calculate_fc_input()[1] * self.calculate_fc_input()[2]
-
+        print(self.fcinputsize)
         self.fc_layers = nn.Sequential(
-            nn.Linear(self.fcinputsize, 128),
+            nn.Linear(self.fcinputsize, 64),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
-            nn.Linear(128, 1),
+            nn.Dropout(p=0.5),
+            nn.Linear(64, 1),
             nn.Sigmoid()
         )
 
@@ -45,7 +39,7 @@ class CNN(nn.Module):
                 height = floor((height - module.kernel_size) / module.stride) + 1
                 width = floor((width - module.kernel_size) / module.stride) + 1
                 continue
-            elif isinstance(module,nn.ReLU) or isinstance(module, nn.Dropout):
+            elif isinstance(module,nn.ReLU) or isinstance(module, nn.Dropout) or isinstance(module, nn.Dropout2d):
                 continue
             elif isinstance(module,nn.BatchNorm2d):
                 continue

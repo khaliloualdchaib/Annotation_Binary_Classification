@@ -94,8 +94,9 @@ class Patch:
                 self.csv["BottomrightY"].append(crop_bottom)
                 self.csv["Annotation"].append(annotation_label)
                 pil_image = Image.fromarray(img)
+                rgb_image = pil_image.convert("RGB")
                 totensor = ToTensor()
-                tensor_image = totensor(pil_image)
+                tensor_image = totensor(rgb_image)
                 torch.save(tensor_image, folder_path+'/'+str(self.patchcounter) + '.pt')
                 if(annotation_label == True):
                     self.annotated.append(self.patchcounter)

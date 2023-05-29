@@ -37,30 +37,20 @@ def Datasplitting(trainingpercentage, testingpercentage, validationpercentage, d
     Validation_dataset = {}
     #### CREATE TRAINING DATASET
     for i in tqdm(clean, desc="CREATE TRAINING DATASET"):    
-        amount_patches_vertical = dataset[int(i)].shape[1] / patch_height
-        amount_patches_horizontal = dataset[int(i)].shape[0] / patch_width
-        patch_amount = math.ceil(amount_patches_vertical) * math.ceil(amount_patches_horizontal)
-        amount_per_image = int(patch_amount * trainingpercentage)
+        #amount_patches_vertical = dataset[int(i)].shape[1] / patch_height
+        #amount_patches_horizontal = dataset[int(i)].shape[0] / patch_width
+        #patch_amount = math.ceil(amount_patches_vertical) * math.ceil(amount_patches_horizontal)
+        amount_per_image = math.floor(int(len(annotated[i]) * trainingpercentage))
+        amount_per_image_testing = math.floor(int(len(annotated[i]) * testingpercentage))
+        amount_per_image_validation = math.floor(int(len(annotated[i]) * validationpercentage))
         random.seed(42)
         random.shuffle(clean[i])
+        random.shuffle(annotated[i])
         Training_dataset[i] = clean[i][:amount_per_image]
         Training_dataset[i].extend(annotated[i][:amount_per_image])
 
         clean[i] = clean[i][amount_per_image:]
         annotated[i] = annotated[i][amount_per_image:]
-
-        
-    #### CREATE TESTING,VALIDATION DATASET
-
-
-    for i in tqdm(clean, desc="CREATE TESTING,VALIDATION DATASET"):
-        amount_patches_vertical = dataset[int(i)].shape[1] / patch_height
-        amount_patches_horizontal = dataset[int(i)].shape[0] / patch_width
-        patch_amount = math.ceil(amount_patches_vertical) * math.ceil(amount_patches_horizontal)
-        amount_per_image_testing = int(patch_amount * testingpercentage)
-        amount_per_image_validation = int(patch_amount * validationpercentage)
-        random.seed(42)
-        random.shuffle(annotated[i])
 
         Validation_dataset[i] = clean[i][:amount_per_image_validation]
         Validation_dataset[i].extend(annotated[i][:amount_per_image_validation])
@@ -72,6 +62,7 @@ def Datasplitting(trainingpercentage, testingpercentage, validationpercentage, d
         Testing_dataset[i].extend(annotated[i][:amount_per_image_testing])
         clean[i] = clean[i][amount_per_image_testing:]
         annotated[i] = annotated[i][amount_per_image_testing:]
+    
 
 
     training_path = os.getcwd() + "\\Training\\"

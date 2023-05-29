@@ -21,7 +21,7 @@ class MLPipeline:
             classifications = self.network(images)
 
             #  computing loss/how wrong our classifications are
-            loss = self.loss(classifications, images)
+            loss = self.loss(classifications.squeeze(), labels.float()) #labels.float() converts the booleans to floats
             loss_per_batch.append(loss.item())
 
             #  zeroing optimizer gradients
@@ -65,7 +65,7 @@ class MLPipeline:
                 #-----------------
                 #  computing loss
                 #-----------------
-                loss = self.loss(classifications, images)
+                loss = self.loss(classifications.squeeze(), labels.float())
                 loss_per_batch.append(loss.item())
                 #print('\t partial train loss (single batch): %f' % (loss.data))
 
@@ -88,41 +88,14 @@ class MLPipeline:
 
                 # Flatten the input and output tensors
                 images = images.permute(0, 3, 1, 2)
-                outputs_flat = (self.network(images)).reshape(-1)
-                inputs_flat = images.reshape(-1)    
+                outputs = self.network(images)
+                predicted_labels = torch.round(outputs).squeeze()
+                network_accuracy += (predicted_labels == labels.float()).sum().item()
+        network_accuracy /= len(dataloader.dataset)
+        network_accuracy = network_accuracy  * 100
 
-                # Calculate the mean squared error between the input and output tensors
-                mse = torch.mean(torch.square(outputs_flat - inputs_flat)) # Question input - output
-                #print("Mse",mse)
-                # Calculate the accuracy as the percentage of pixels that are accurately reconstructed
-                accuracy = 100 * (1 - mse) # Question / torch.mean(torch.square(inputs_flat)))
-                #print("accuracy",accuracy)
-                network_accuracy += accuracy
-        network_accuracy /= len(dataloader)
-        numpy_network_accuracy = network_accuracy.cpu().numpy()
+        return network_accuracy
 
-        return numpy_network_accuracy
-
-    def test_model(self, dataloader, model):
-        network_accuracy = 0
-        with torch.no_grad():
-            for images, labels in tqdm(dataloader):
-                images, labels = images.to(torch.float32).to(self.device), labels.to(self.device)
-                images = images.permute(0, 3, 1, 2)
-                output = model(images)
-                outputs_flat = (output).reshape(-1)
-                inputs_flat = images.reshape(-1)
-                # Calculate the mean squared error between the input and output tensors
-                mse = torch.mean(torch.square(outputs_flat - inputs_flat)) # Question input - output
-                #print("Mse",mse)
-                # Calculate the accuracy as the percentage of pixels that are accurately reconstructed
-                accuracy = 100 * (1 - mse) # Question / torch.mean(torch.square(inputs_flat)))
-                #print("accuracy",accuracy)
-                network_accuracy += accuracy
-        network_accuracy /= len(dataloader)
-        numpy_network_accuracy = network_accuracy.cpu().numpy()
-        print("Accuracy on the test data is ", numpy_network_accuracy)
-        return numpy_network_accuracy
     def train_epochs(self, epochs, training_set, validation_set, saveModel=False):
 
         #  creating log

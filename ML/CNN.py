@@ -1,30 +1,25 @@
 import torch
 import torch.nn as nn
 from math import floor
+import torch.nn.functional as F
 
 class CNN(nn.Module):
     def __init__(self, height, width):
         super(CNN, self).__init__()
         self.width = width
         self.height = height
-        self.conv_layers = nn.Sequential(
-            nn.Conv2d(3,2,3,stride=2, padding=1),
-            nn.ReLU(True),
-            nn.Dropout(p=0.2),
-            nn.Conv2d(2,4,3,stride=2, padding=1),
-            nn.ReLU(True),
-            nn.Dropout(p=0.2),
-            nn.Conv2d(4,8,3,stride=2, padding=0),
-            nn.ReLU(True),
-        )
-        self.fcinputsize = self.calculate_fc_input()[0] * self.calculate_fc_input()[1] * self.calculate_fc_input()[2]
-        self.fc_layers = nn.Sequential(
-            nn.Linear(self.fcinputsize, 64),
-            nn.ReLU(inplace=True),
-            nn.Dropout(p=0.5),
-            nn.Linear(64, 1),
-            nn.Sigmoid()
-        )
+
+         # onvolutional layers (3,16,32)
+        self.conv1 = nn.Conv2d(in_channels = 3, out_channels = 16, kernel_size=(5, 5), stride=2, padding=1)
+        self.conv2 = nn.Conv2d(in_channels = 16, out_channels = 32, kernel_size=(5, 5), stride=2, padding=1)
+        self.conv3 = nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size=(3, 3), padding=1)
+
+        # conected layers
+        self.fc1 = nn.Linear(in_features= 64 * 6 * 6, out_features=500)
+        self.fc2 = nn.Linear(in_features=500, out_features=1)
+
+        #self.fcinputsize = self.calculate_fc_input()[0] * self.calculate_fc_input()[1] * self.calculate_fc_input()[2]
+        
 
     def calculate_fc_input(self):
         width = self.width
@@ -46,8 +41,18 @@ class CNN(nn.Module):
         return lastfilter_size, height, width
 
     def forward(self, x):
-        x = self.conv_layers(x)
-        x = x.reshape(x.size(0), -1)
-        x = self.fc_layers(x)
+        x = F.relu(self.conv1(x))
+        x = F.max_pool2d(x, 2)
+
+        x = F.relu(self.conv2(x))
+        x = F.max_pool2d(x, 2)
+
+        x = F.relu(self.conv3(x))
+        x = F.max_pool2d(x, 2)
+
+        x = x.reshape(x.shape[0], -1)
+        x = F.relu(self.fc1(x))
+        x = torch.sigmoid(self.fc2(x))
+
         return x
     

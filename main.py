@@ -28,9 +28,7 @@ trainingdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json",
 testdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Testing")
 validationdata = PatchDataset("PatchData/Patches.csv", "PatchData/DataSplit.json", "Validation")
 batch_size = 64
-print(len(trainingdata))
-print(len(testdata))
-print(len(validationdata))
+
 training_loader = DataLoader(trainingdata, batch_size=batch_size)
 testing_loader = DataLoader(testdata, batch_size=batch_size)
 validation_loader = DataLoader(validationdata, batch_size=batch_size)
@@ -46,10 +44,10 @@ lr= 0.001
 ### Set the random seed for reproducible results
 torch.manual_seed(0)
 
-optim = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=0.001)
+optim = torch.optim.Adagrad(model.parameters(), lr=lr, weight_decay=0.0001)
 ##################### TRAINING + Validation #####################################
 pipeline = MLPipeline(model, device, loss_fn, optim)
-log_dict = pipeline.train_epochs(15,training_loader, validation_loader,True)
+log_dict = pipeline.train_epochs(100,training_loader, validation_loader,True)
 ##################### TESTING #####################################
 #model.load_state_dict(torch.load("autoencoder_reduced_filters.pth", map_location=torch.device('cpu')))
 #model.eval()
